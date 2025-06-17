@@ -2,6 +2,9 @@
 
 A Python-based system for predicting heart disease risk using machine learning.
 
+[<img src="https://static-00.iconduck.com/assets.00/visual-studio-code-icon-2048x2026-9ua8vqiy.png" alt="Get it on GitHub" height="80">](https://github.dev/samyak2403/Heart-Disease-Prediction-T)
+
+
 ## Features
 
 - Predicts heart disease risk based on patient data
