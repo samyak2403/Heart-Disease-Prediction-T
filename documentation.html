@@ -1,0 +1,3061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#34495e">
+    <title>Heart Disease Prediction System - Project Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: headerSlideIn 1.2s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: headerShine 3s ease-in-out infinite;
+            transform: rotate(45deg);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: titleBounceIn 1.5s ease-out 0.3s both;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            animation: subtitleFadeIn 1.8s ease-out 0.6s both;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Header Animation Keyframes */
+        @keyframes headerSlideIn {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes headerShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+        
+        @keyframes titleBounceIn {
+            0% {
+                transform: scale(0.3) translateY(-50px);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05) translateY(0);
+            }
+            70% {
+                transform: scale(0.95);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes subtitleFadeIn {
+            0% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 0.9;
+            }
+        }
+        
+        .nav-menu {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            padding: 8px 20px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            position: sticky;
+            top: 15px;
+            z-index: 1000;
+            animation: navSlideDown 1s ease-out 0.9s both;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .nav-menu:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            margin: 0;
+            padding: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            white-space: nowrap;
+        }
+        
+        .nav-menu ul::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .nav-menu li {
+            animation: navItemFadeIn 0.6s ease-out both;
+        }
+        
+        .nav-menu li:nth-child(1) { animation-delay: 1.2s; }
+        .nav-menu li:nth-child(2) { animation-delay: 1.3s; }
+        .nav-menu li:nth-child(3) { animation-delay: 1.4s; }
+        .nav-menu li:nth-child(4) { animation-delay: 1.5s; }
+        .nav-menu li:nth-child(5) { animation-delay: 1.6s; }
+        .nav-menu li:nth-child(6) { animation-delay: 1.7s; }
+        .nav-menu li:nth-child(7) { animation-delay: 1.8s; }
+        .nav-menu li:nth-child(8) { animation-delay: 1.9s; }
+        .nav-menu li:nth-child(9) { animation-delay: 2.0s; }
+        
+        .nav-menu a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 0.9em;
+            letter-spacing: 0.3px;
+            min-width: 80px;
+            text-align: center;
+            white-space: nowrap;
+            backdrop-filter: blur(5px);
+        }
+        
+        .nav-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-menu a:hover {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            transform: translateY(-1px) scale(1.05);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .nav-menu a:hover::before {
+            left: 100%;
+        }
+        
+        .nav-menu a:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Active Navigation States */
+        .nav-menu a.active {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            box-shadow: 0 3px 12px rgba(231, 76, 60, 0.5);
+            transform: scale(1.08);
+        }
+        
+        .nav-menu a.active::before {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+        
+        /* Menu Open State */
+        .nav-menu.menu-open {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            transform: scale(1.02);
+        }
+        
+        /* Enhanced Hover Effects */
+        .nav-menu a {
+            position: relative;
+        }
+        
+        /* Toolbar-style indicators */
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 1px;
+        }
+        
+        .nav-menu a:hover::after {
+            width: 60%;
+        }
+        
+        .nav-menu a.active::after {
+            width: 70%;
+            background: linear-gradient(90deg, #fff, #ecf0f1);
+        }
+        
+        /* Toolbar separators */
+        .nav-menu li:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-50%);
+        }
+        
+        /* Navigation Animation Keyframes */
+        @keyframes navSlideDown {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes navItemFadeIn {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: sectionFadeInUp 0.8s ease-out both;
+        }
+        
+        .section:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+        
+        .section:nth-child(odd) {
+            animation-delay: 0.4s;
+        }
+        
+        /* Section Animation Keyframes */
+        @keyframes sectionFadeInUp {
+            0% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            border-left: 4px solid #e74c3c;
+            padding-left: 15px;
+        }
+        
+        h4 {
+            color: #2c3e50;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .highlight {
+            background: #f39c12;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .warning {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .info {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .flowchart {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .flow-step {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .flow-step::after {
+            content: "→";
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #3498db;
+        }
+        
+        .flow-step:last-child::after {
+            display: none;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 0 0 15px 15px;
+            margin: 40px -20px -20px -20px;
+        }
+        
+        /* System Architecture Diagram Styles */
+        .architecture-diagram {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .architecture-layer {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            border-left: 5px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .architecture-layer:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .layer-applications { border-left-color: #e74c3c; }
+        .layer-interfaces { border-left-color: #f39c12; }
+        .layer-business { border-left-color: #27ae60; }
+        .layer-processing { border-left-color: #3498db; }
+        .layer-data { border-left-color: #9b59b6; }
+        
+        .layer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .layer-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .layer-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .layer-components {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .component-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed #bdc3c7;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .component-box:hover {
+            border-color: #3498db;
+            background: #ebf3fd;
+            transform: scale(1.02);
+        }
+        
+        .component-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .component-desc {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        .data-flow-diagram {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .flow-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .flow-node {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 150px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .flow-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .flow-arrow {
+            font-size: 2em;
+            color: #3498db;
+            margin: 0 10px;
+        }
+        
+        .component-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .component-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card-input { border-top-color: #e74c3c; }
+        .card-process { border-top-color: #f39c12; }
+        .card-output { border-top-color: #27ae60; }
+        
+        .connection-line {
+            height: 2px;
+            background: linear-gradient(90deg, #3498db 0%, #9b59b6 100%);
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .connection-line::before {
+            content: "→";
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            font-size: 1.5em;
+            color: #9b59b6;
+        }
+        
+                 /* Enhanced Mobile Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 5px;
+                margin: 0;
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+            
+            .header {
+                padding: 15px 10px;
+                text-align: center;
+                animation: headerSlideInMobile 1.2s ease-out;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+                line-height: 1.2;
+                margin-bottom: 10px;
+                animation: titleBounceInMobile 1.5s ease-out 0.3s both;
+            }
+            
+            .header p {
+                font-size: 0.9em;
+                margin: 5px 0;
+                animation: subtitleFadeInMobile 1.8s ease-out 0.6s both;
+            }
+            
+            /* Mobile-specific animations */
+            @keyframes headerSlideInMobile {
+                0% {
+                    transform: translateY(-80px);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes titleBounceInMobile {
+                0% {
+                    transform: scale(0.5) translateY(-30px);
+                    opacity: 0;
+                }
+                50% {
+                    transform: scale(1.02) translateY(0);
+                }
+                70% {
+                    transform: scale(0.98);
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes subtitleFadeInMobile {
+                0% {
+                    transform: translateY(20px);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 0.9;
+                }
+            }
+            
+            .nav-menu {
+                margin: 10px 5px;
+                padding: 6px 12px;
+                border-radius: 25px;
+                animation: navSlideDownMobile 1s ease-out 0.9s both;
+                max-width: calc(100vw - 20px);
+                overflow: hidden;
+            }
+            
+            .nav-menu ul {
+                flex-direction: row;
+                align-items: center;
+                gap: 3px;
+                padding: 4px 8px;
+                background: transparent;
+                backdrop-filter: none;
+                border-radius: 0;
+                margin: 0;
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                justify-content: flex-start;
+                white-space: nowrap;
+            }
+            
+            .nav-menu ul::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .nav-menu li {
+                flex-shrink: 0;
+                text-align: center;
+                animation: navItemSlideInMobile 0.6s ease-out both;
+            }
+            
+            .nav-menu li:nth-child(1) { animation-delay: 1.2s; }
+            .nav-menu li:nth-child(2) { animation-delay: 1.25s; }
+            .nav-menu li:nth-child(3) { animation-delay: 1.3s; }
+            .nav-menu li:nth-child(4) { animation-delay: 1.35s; }
+            .nav-menu li:nth-child(5) { animation-delay: 1.4s; }
+            .nav-menu li:nth-child(6) { animation-delay: 1.45s; }
+            .nav-menu li:nth-child(7) { animation-delay: 1.5s; }
+            .nav-menu li:nth-child(8) { animation-delay: 1.55s; }
+            .nav-menu li:nth-child(9) { animation-delay: 1.6s; }
+            
+            .nav-menu a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 10px;
+                font-size: 0.8em;
+                border-radius: 15px;
+                text-decoration: none;
+                color: rgba(255, 255, 255, 0.9);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                margin: 0;
+                position: relative;
+                overflow: hidden;
+                white-space: nowrap;
+                flex-shrink: 0;
+                min-width: 60px;
+                text-align: center;
+                backdrop-filter: blur(5px);
+            }
+            
+            .nav-menu a::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s;
+            }
+            
+            .nav-menu a:hover {
+                background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+                transform: scale(1.02);
+                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            }
+            
+            .nav-menu a:hover::before {
+                left: 100%;
+            }
+            
+            /* Mobile Toolbar - Always Visible */
+            .nav-menu {
+                display: block !important;
+            }
+            
+            .nav-menu ul {
+                display: flex !important;
+            }
+            
+            /* Mobile Active States */
+            .nav-menu a.active {
+                background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+                box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);
+                transform: scale(1.05);
+            }
+            
+            /* Mobile navigation animations */
+            @keyframes navSlideDownMobile {
+                0% {
+                    transform: translateY(-40px);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes navItemSlideInMobile {
+                0% {
+                    transform: translateX(-30px);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            /* Enhanced Mobile Navigation */
+            .nav-menu ul {
+                animation: mobileNavSlideIn 0.4s ease-out;
+            }
+            
+            @keyframes mobileNavSlideIn {
+                0% {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .section {
+                padding: 15px 10px;
+                margin: 10px 0;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+                text-align: center;
+                margin: 20px 0 15px 0;
+            }
+            
+            h3 {
+                font-size: 1.4em;
+                margin: 15px 0 10px 0;
+                text-align: center;
+            }
+            
+            h4 {
+                font-size: 1.2em;
+                margin: 12px 0 8px 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin: 20px 0;
+            }
+            
+            .stat-card {
+                padding: 15px 10px;
+                margin: 8px 0;
+                text-align: center;
+            }
+            
+            .stat-number {
+                font-size: 2.5em;
+                margin-bottom: 5px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .feature-card {
+                padding: 15px 12px;
+                margin: 8px 0;
+            }
+            
+            .feature-card h4 {
+                font-size: 1.1em;
+                margin-bottom: 8px;
+            }
+            
+            .feature-card p, .feature-card ul {
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
+            
+            table {
+                font-size: 0.75em;
+                overflow-x: auto;
+                display: block;
+                white-space: nowrap;
+                width: 100%;
+                border-radius: 8px;
+            }
+            
+            .code-block {
+                font-size: 0.8em;
+                overflow-x: auto;
+                padding: 15px 10px;
+                border-radius: 8px;
+                line-height: 1.4;
+            }
+            
+            .flowchart {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .flow-step {
+                display: block;
+                margin: 10px 0;
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+                padding: 15px 10px;
+                font-size: 0.9em;
+            }
+            
+            .flow-step::after {
+                content: "↓";
+                right: 50%;
+                top: 100%;
+                transform: translateX(50%);
+            }
+            
+            .component-diagram {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .component-card {
+                padding: 15px 12px;
+                margin: 10px 0;
+            }
+            
+            .component-card h4 {
+                font-size: 1.1em;
+                margin-bottom: 10px;
+            }
+            
+            .component-card ul {
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
+            
+            .component-card li {
+                margin-bottom: 6px;
+            }
+            
+            .flow-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+                font-size: 1.8em;
+                margin: 5px 0;
+            }
+            
+            .flow-node {
+                padding: 15px 10px;
+                min-width: 120px;
+                font-size: 0.9em;
+            }
+            
+            .layer-components {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .architecture-diagram {
+                padding: 15px 10px;
+                margin: 15px 0;
+            }
+            
+            .architecture-layer {
+                padding: 15px 10px;
+                margin: 10px 0;
+            }
+            
+            .layer-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .layer-icon {
+                font-size: 2.5em;
+            }
+            
+            .layer-title {
+                font-size: 1.3em;
+            }
+            
+            .component-box {
+                padding: 12px 8px;
+                margin: 8px 0;
+            }
+            
+            .component-name {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+            
+            .component-desc {
+                font-size: 0.8em;
+                line-height: 1.3;
+            }
+            
+            .data-flow-diagram {
+                padding: 15px 10px;
+                margin: 15px 0;
+            }
+            
+            .info, .success, .warning {
+                padding: 12px 10px;
+                margin: 10px 0;
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
+            
+            .footer {
+                padding: 20px 10px;
+                margin: 20px -10px -10px -10px;
+                text-align: center;
+            }
+            
+            .footer h3 {
+                font-size: 1.3em;
+                margin-bottom: 8px;
+            }
+            
+            .footer p {
+                font-size: 0.9em;
+                line-height: 1.4;
+                margin: 5px 0;
+            }
+            
+            /* Touch-friendly hover effects */
+            .component-box:hover {
+                transform: scale(1.01);
+            }
+            
+            .architecture-layer:hover {
+                transform: translateY(-1px);
+            }
+            
+            .flow-node:hover {
+                transform: translateY(-2px);
+            }
+            
+            .component-card:hover {
+                transform: translateY(-2px);
+            }
+            
+            /* Improved scrolling on mobile */
+            * {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+        
+        /* Tablet-specific optimizations */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .container {
+                padding: 15px;
+                max-width: 95%;
+            }
+            
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .component-diagram {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .layer-components {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.8em;
+            }
+            
+            h2 {
+                font-size: 2.2em;
+            }
+            
+            .flow-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .flow-arrow {
+                transform: none;
+            }
+        }
+        
+        /* Small mobile devices (480px and below) */
+        @media (max-width: 480px) {
+            .nav-menu {
+                display: block !important;
+                visibility: visible !important;
+                padding: 4px 8px;
+                margin: 8px 2px 15px 2px;
+            }
+            
+            .nav-menu ul {
+                display: flex !important;
+                visibility: visible !important;
+                gap: 2px;
+            }
+            
+            .container {
+                padding: 3px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                margin: 10px 0;
+            }
+            
+            .header p {
+                font-size: 0.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+                margin: 15px 0 10px 0;
+            }
+            
+            h3 {
+                font-size: 1.2em;
+                margin: 12px 0 8px 0;
+            }
+            
+            .section {
+                padding: 10px 5px;
+            }
+            
+            .nav-menu a {
+                padding: 10px 5px;
+                font-size: 0.85em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .stat-number {
+                font-size: 2em;
+            }
+            
+            .code-block {
+                font-size: 0.75em;
+                padding: 10px 8px;
+            }
+            
+            table {
+                font-size: 0.7em;
+            }
+            
+            .flow-node {
+                padding: 12px 8px;
+                min-width: 100px;
+                font-size: 0.8em;
+            }
+            
+            .component-card, .feature-card {
+                padding: 12px 8px;
+            }
+            
+            .architecture-layer {
+                padding: 12px 8px;
+            }
+            
+            .layer-icon {
+                font-size: 2em;
+            }
+            
+            .layer-title {
+                font-size: 1.1em;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                padding: 6px 12px;
+                border-radius: 25px;
+                margin: 10px 5px 20px 5px;
+                max-width: calc(100vw - 20px);
+                display: block !important;
+                visibility: visible !important;
+            }
+            
+            .nav-menu ul {
+                flex-direction: row;
+                align-items: center;
+                gap: 3px;
+                padding: 0;
+                background: transparent;
+                backdrop-filter: none;
+                border-radius: 0;
+                margin: 0;
+                overflow-x: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                justify-content: flex-start;
+                display: flex !important;
+                visibility: visible !important;
+            }
+            
+            .nav-menu ul::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .nav-menu li {
+                flex-shrink: 0;
+                text-align: center;
+            }
+            
+            .nav-menu a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 10px;
+                font-size: 0.8em;
+                border-radius: 15px;
+                text-decoration: none;
+                color: rgba(255, 255, 255, 0.9);
+                transition: all 0.3s ease;
+                margin: 0;
+                white-space: nowrap;
+                flex-shrink: 0;
+                min-width: 60px;
+                text-align: center;
+            }
+            
+            .nav-menu a:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.02);
+            }
+            
+            .section {
+                padding: 15px 10px;
+                margin: 10px 0;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+                text-align: center;
+                margin: 20px 0 15px 0;
+            }
+            
+            h3 {
+                font-size: 1.4em;
+                margin: 15px 0 10px 0;
+                text-align: center;
+            }
+            
+            h4 {
+                font-size: 1.2em;
+                margin: 12px 0 8px 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin: 20px 0;
+            }
+            
+            .stat-card {
+                padding: 15px 10px;
+                margin: 8px 0;
+                text-align: center;
+            }
+            
+            .stat-number {
+                font-size: 2.5em;
+                margin-bottom: 5px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .feature-card {
+                padding: 15px 12px;
+                margin: 8px 0;
+            }
+            
+            .feature-card h4 {
+                font-size: 1.1em;
+                margin-bottom: 8px;
+            }
+            
+            .feature-card p, .feature-card ul {
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
+            
+            table {
+                font-size: 0.75em;
+                overflow-x: auto;
+                display: block;
+                white-space: nowrap;
+                width: 100%;
+                border-radius: 8px;
+            }
+            
+            .code-block {
+                font-size: 0.8em;
+                overflow-x: auto;
+                padding: 15px 10px;
+                border-radius: 8px;
+                line-height: 1.4;
+            }
+            
+            .flowchart {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .flow-step {
+                display: block;
+                margin: 10px 0;
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+                padding: 15px 10px;
+                font-size: 0.9em;
+            }
+            
+            .flow-step::after {
+                content: "↓";
+                right: 50%;
+                top: 100%;
+                transform: translateX(50%);
+            }
+            
+            .component-diagram {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .component-card {
+                padding: 15px 12px;
+                margin: 10px 0;
+            }
+            
+            .component-card h4 {
+                font-size: 1.1em;
+                margin-bottom: 10px;
+            }
+            
+            .component-card ul {
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
+            
+            .component-card li {
+                margin-bottom: 6px;
+            }
+            
+            .flow-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+                font-size: 1.8em;
+                margin: 5px 0;
+            }
+            
+            .flow-node {
+                padding: 15px 10px;
+                min-width: 120px;
+                font-size: 0.9em;
+            }
+            
+            .layer-components {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .architecture-diagram {
+                padding: 15px 10px;
+                margin: 15px 0;
+            }
+            
+            .architecture-layer {
+                padding: 15px 10px;
+                margin: 10px 0;
+            }
+            
+            .layer-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .layer-icon {
+                font-size: 2.5em;
+            }
+            
+            .layer-title {
+                font-size: 1.3em;
+            }
+            
+            .component-box {
+                padding: 12px 8px;
+                margin: 8px 0;
+            }
+            
+            .component-name {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+            
+            .component-desc {
+                font-size: 0.8em;
+                line-height: 1.3;
+            }
+            
+            .data-flow-diagram {
+                padding: 15px 10px;
+                margin: 15px 0;
+            }
+            
+            .info, .success, .warning {
+                padding: 12px 10px;
+                margin: 10px 0;
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
+            
+            .footer {
+                padding: 20px 10px;
+                margin: 20px -10px -10px -10px;
+                text-align: center;
+            }
+            
+            .footer h3 {
+                font-size: 1.3em;
+                margin-bottom: 8px;
+            }
+            
+            .footer p {
+                font-size: 0.9em;
+                line-height: 1.4;
+                margin: 5px 0;
+            }
+            
+            /* Touch-friendly hover effects */
+            .component-box:hover {
+                transform: scale(1.01);
+            }
+            
+            .architecture-layer:hover {
+                transform: translateY(-1px);
+            }
+            
+            .flow-node:hover {
+                transform: translateY(-2px);
+            }
+            
+            .component-card:hover {
+                transform: translateY(-2px);
+            }
+            
+            /* Improved scrolling on mobile */
+            * {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+        
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .container {
+                padding: 15px;
+                max-width: 95%;
+            }
+            
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .component-diagram {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .layer-components {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.8em;
+            }
+            
+            h2 {
+                font-size: 2.2em;
+            }
+            
+            .flow-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .flow-arrow {
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 3px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                margin: 10px 0;
+            }
+            
+            .header p {
+                font-size: 0.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+                margin: 15px 0 10px 0;
+            }
+            
+            h3 {
+                font-size: 1.2em;
+                margin: 12px 0 8px 0;
+            }
+            
+            .section {
+                padding: 10px 5px;
+            }
+            
+            .nav-menu a {
+                padding: 10px 5px;
+                font-size: 0.85em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .stat-number {
+                font-size: 2em;
+            }
+            
+            .code-block {
+                font-size: 0.75em;
+                padding: 10px 8px;
+            }
+            
+            table {
+                font-size: 0.7em;
+            }
+            
+            .flow-node {
+                padding: 12px 8px;
+                min-width: 100px;
+                font-size: 0.8em;
+            }
+            
+            .component-card, .feature-card {
+                padding: 12px 8px;
+            }
+            
+            .architecture-layer {
+                padding: 12px 8px;
+            }
+            
+            .layer-icon {
+                font-size: 2em;
+            }
+            
+                         .layer-title {
+                 font-size: 1.1em;
+             }
+         }
+         
+         /* Toolbar Mode - Always Visible */
+         .nav-menu.toolbar-mode {
+             display: block !important;
+             visibility: visible !important;
+         }
+         
+         .nav-menu.toolbar-mode ul {
+             display: flex !important;
+             visibility: visible !important;
+         }
+         
+         @media (max-width: 360px) {
+             .nav-menu {
+                 display: block !important;
+                 visibility: visible !important;
+                 padding: 3px 6px;
+                 margin: 5px 1px 10px 1px;
+                 text-align: center;
+             }
+             
+             .nav-menu ul {
+                 display: flex !important;
+                 visibility: visible !important;
+                 flex-direction: row;
+                 gap: 1px;
+                 width: 100%;
+             }
+             
+             .nav-menu a {
+                 padding: 4px 8px;
+                 font-size: 0.75em;
+                 min-width: 50px;
+             }
+             
+             .header h1 {
+                 font-size: 1.5em;
+             }
+             
+             .header p {
+                 font-size: 0.75em;
+             }
+             
+             h2 {
+                 font-size: 1.3em;
+             }
+             
+             h3 {
+                 font-size: 1.1em;
+             }
+         }
+         
+         /* Improved accessibility and touch targets */
+         .nav-menu a {
+             min-height: 44px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+         }
+         
+         /* Better focus indicators */
+         .nav-menu a:focus {
+             outline: 2px solid #3498db;
+             outline-offset: 2px;
+         }
+         
+         /* Smooth scrolling */
+         html {
+             scroll-behavior: smooth;
+         }
+    </style>
+    <script>
+        // Enhanced navigation menu handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const navMenu = document.querySelector('.nav-menu');
+            const navLinks = document.querySelectorAll('.nav-menu a[href^="#"]');
+            const sections = document.querySelectorAll('.section');
+            
+                         // Toolbar is always visible - no toggle needed
+             const mobileToggle = null;
+            
+                         // Toolbar is always visible - ensure navigation is always shown
+             const navUl = navMenu.querySelector('ul');
+             navUl.style.display = 'flex';
+             navMenu.classList.add('toolbar-mode');
+            
+            // Smooth scrolling and active state handling
+            navLinks.forEach((link, index) => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    // Remove active class from all links
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                                         // Toolbar is always visible - no closing needed
+                    
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 120;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Scroll spy functionality - highlight active section
+            function updateActiveLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.pageYOffset >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            // Throttled scroll event
+            let ticking = false;
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(updateActiveLink);
+                    ticking = true;
+                    setTimeout(() => { ticking = false; }, 100);
+                }
+            }
+            
+            window.addEventListener('scroll', requestTick);
+            
+            // Initialize first active link
+            updateActiveLink();
+            
+                         // Handle window resize - toolbar always visible
+             window.addEventListener('resize', function() {
+                 navMenu.querySelector('ul').style.display = 'flex';
+             });
+             
+             // Ensure toolbar is always visible on load
+             navMenu.querySelector('ul').style.display = 'flex';
+            
+            // Keyboard navigation support
+            navMenu.addEventListener('keydown', function(e) {
+                const focusableElements = navMenu.querySelectorAll('a, button');
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+                
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstElement) {
+                            e.preventDefault();
+                            lastElement.focus();
+                        }
+                    } else {
+                        if (document.activeElement === lastElement) {
+                            e.preventDefault();
+                            firstElement.focus();
+                        }
+                    }
+                }
+                
+                                 // Toolbar is always visible - no escape functionality needed
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🫀 Heart Disease Prediction System</h1>
+            <p>Comprehensive Machine Learning Solution for Cardiovascular Risk Assessment</p>
+            <p><strong>Project Documentation & Technical Report</strong></p>
+        </div>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#algorithms">Algorithms</a></li>
+                <li><a href="#interfaces">Interfaces</a></li>
+                <li><a href="#implementation">Implementation</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+            </ul>
+        </nav>
+
+        <section id="overview" class="section">
+            <h2>📋 Project Overview</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div>User Interfaces</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">13</div>
+                    <div>Medical Features</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div>Feature Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div>Dependencies</div>
+                </div>
+            </div>
+
+            <h3>Project Mission</h3>
+            <p>The Heart Disease Prediction System is a comprehensive machine learning solution designed to assess cardiovascular risk using patient data. This system combines advanced algorithms, intuitive user interfaces, and professional medical visualizations to provide accurate risk assessments with detailed explanations.</p>
+
+            <h3>Key Objectives</h3>
+            <ul>
+                <li><strong>Accurate Prediction:</strong> Utilize Random Forest algorithms for reliable heart disease risk assessment</li>
+                <li><strong>User Accessibility:</strong> Provide multiple interfaces (web, console, executable) for different user needs</li>
+                <li><strong>Medical Context:</strong> Integrate comprehensive medical knowledge and explanations</li>
+                <li><strong>Visual Clarity:</strong> Present results through professional, medical-grade visualizations</li>
+                <li><strong>Deployment Flexibility:</strong> Support various deployment scenarios from development to production</li>
+            </ul>
+
+            <div class="warning">
+                <strong>⚠️ Medical Disclaimer:</strong> This system is designed for educational and research purposes only. It should NOT be used as a substitute for professional medical advice, diagnosis, or treatment.
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <h2>🌟 Core Features & Capabilities</h2>
+
+            <h3>🔬 Machine Learning Engine</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Random Forest Classifier</h4>
+                    <p>Ensemble learning method with 100+ decision trees for robust predictions and feature importance analysis.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Hyperparameter Optimization</h4>
+                    <p>GridSearchCV with cross-validation for optimal model performance and generalization.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Feature Engineering</h4>
+                    <p>Automatic BMI calculation, categorical encoding, and numerical standardization.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Model Persistence</h4>
+                    <p>Joblib serialization for model saving/loading with preprocessor state preservation.</p>
+                </div>
+            </div>
+
+            <h3>📊 Medical Feature Set</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Features</th>
+                        <th>Type</th>
+                        <th>Range/Values</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Demographics</td>
+                        <td>Age, Gender, Height, Weight</td>
+                        <td>Numeric/Categorical</td>
+                        <td>20-100 years, M/F, 120-220cm, 30-250kg</td>
+                    </tr>
+                    <tr>
+                        <td>Symptoms</td>
+                        <td>Chest Pain Type</td>
+                        <td>Categorical</td>
+                        <td>Typical/Atypical/Non-anginal/Asymptomatic</td>
+                    </tr>
+                    <tr>
+                        <td>Vital Signs</td>
+                        <td>Blood Pressure, Heart Rate</td>
+                        <td>Numeric</td>
+                        <td>80-200 mmHg, 60-220 bpm</td>
+                    </tr>
+                    <tr>
+                        <td>Blood Tests</td>
+                        <td>Cholesterol, Blood Sugar</td>
+                        <td>Numeric/Binary</td>
+                        <td>100-600 mg/dl, >120 mg/dl flag</td>
+                    </tr>
+                    <tr>
+                        <td>Heart Tests</td>
+                        <td>ECG Results</td>
+                        <td>Categorical</td>
+                        <td>Normal/ST-T abnormality/LVH</td>
+                    </tr>
+                    <tr>
+                        <td>Exercise Tests</td>
+                        <td>Angina, ST Depression, Slope</td>
+                        <td>Binary/Numeric/Categorical</td>
+                        <td>Yes/No, 0-10, Up/Flat/Down</td>
+                    </tr>
+                    <tr>
+                        <td>Imaging</td>
+                        <td>Vessel Blockages, Thalassemia</td>
+                        <td>Categorical</td>
+                        <td>0-3 vessels, Normal/Fixed/Reversible</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🎨 Visualization Features</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Risk Gauge Dashboard</h4>
+                    <p>Interactive color-coded gauge showing probability from 0-100% with severity indicators.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Feature Impact Charts</h4>
+                    <p>Horizontal bar charts showing positive/negative contributions of each feature to risk.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Category Analysis</h4>
+                    <p>Grouped feature visualization by medical categories with color-coded severity levels.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Personalized Recommendations</h4>
+                    <p>Medical icons with actionable advice based on individual risk factors and BMI.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="architecture" class="section">
+            <h2>🏗️ System Architecture</h2>
+
+            <h3>Complete Project Structure</h3>
+            <div class="code-block">
+Heart Disease Prediction T/
+├── 📁 src/                          # 🎯 Core Source Modules
+│   ├── 📁 data/                     # 📊 Data Management
+│   │   ├── feature_definitions.py   # Medical feature specifications & validation
+│   │   └── __init__.py              # Package initialization
+│   ├── 📁 models/                   # 🤖 Machine Learning Core
+│   │   ├── heart_disease_model.py   # Main ML model implementation (389 lines)
+│   │   ├── model.py                 # Alternative model interface (317 lines)
+│   │   ├── feature_importance.py    # Feature analysis & visualization (262 lines)
+│   │   └── __init__.py              # Package initialization
+│   ├── 📁 preprocessing/            # 🔧 Data Processing Pipeline
+│   │   ├── preprocessor.py          # Feature transformation & scaling
+│   │   └── __init__.py              # Package initialization
+│   ├── 📁 ui/                       # 🖥️ User Interface Layer
+│   │   ├── gradio_interface.py      # Web-based UI implementation (196 lines)
+│   │   ├── console_interface.py     # Command-line interface (143 lines)
+│   │   └── __init__.py              # Package initialization
+│   └── 📁 utils/                    # 🛠️ Utility Functions
+│       ├── data_loader.py           # Data loading & sample generation
+│       └── __init__.py              # Package initialization
+│
+├── 📁 models/                       # 💾 Trained Model Storage
+│   └── heart_disease_model.joblib   # Serialized ML model & preprocessor
+│
+├── 📁 dist/                         # 📦 Distribution Files (Generated)
+│   └── HeartDiseasePrediction.exe   # Standalone executable
+│
+├── 📁 build/                        # 🔨 Build Artifacts (Generated)
+│   └── [PyInstaller build files]    # Temporary build files
+│
+├── 📁 __pycache__/                  # 🐍 Python Cache (Generated)
+│   └── [Compiled Python files]      # Bytecode cache files
+│
+├── 📁 .git/                         # 📝 Version Control
+│   └── [Git repository files]       # Git version control data
+│
+├── 📁 .gradio/                      # 🌐 Gradio Cache (Generated)
+│   └── [Gradio temporary files]     # Web interface cache
+│
+├── 📄 heart_disease_app.py          # 🌟 Main Web Application (1229 lines)
+├── 📄 main.py                       # 💻 CLI Application Entry Point (147 lines)
+├── 📄 analyze_features.py           # 📈 Feature Analysis with UI (60 lines)
+├── 📄 analyze_features_only.py      # 📊 Feature Analysis Only (62 lines)
+├── 📄 simple_heart_app.py           # ⚡ Simplified Application Version
+├── 📄 example.py                    # 📖 Usage Examples & Demos (109 lines)
+├── 📄 build_exe.py                  # 🏗️ Executable Builder Script (169 lines)
+├── 📄 build_exe.bat                 # 🖥️ Windows Build Script
+├── 📄 run_heart_disease_app.bat     # 🚀 Windows Quick Launcher
+├── 📄 requirements.txt              # 📋 Python Dependencies (8 packages)
+├── 📄 feature_importance.png        # 📊 Generated Feature Plot
+├── 📄 *.spec                        # ⚙️ PyInstaller Specification Files
+├── 📄 .gitignore                    # 🚫 Git Ignore Rules
+├── 📄 README.md                     # 📚 Project Documentation
+└── 📄 documentation.html            # 📄 This Technical Report
+            </div>
+
+            <h3>Directory Structure Analysis</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📊 src/data/ - Data Layer</h4>
+                    <p><strong>Purpose:</strong> Medical feature definitions and data specifications</p>
+                    <p><strong>Key File:</strong> feature_definitions.py (154 lines)</p>
+                    <ul>
+                        <li>13 medical feature definitions</li>
+                        <li>Value ranges and validation rules</li>
+                        <li>Medical descriptions and categories</li>
+                        <li>Derived feature calculations (BMI)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🤖 src/models/ - ML Core</h4>
+                    <p><strong>Purpose:</strong> Machine learning model implementations</p>
+                    <p><strong>Total Lines:</strong> 968 lines of ML code</p>
+                    <ul>
+                        <li>Random Forest classifier</li>
+                        <li>Hyperparameter optimization</li>
+                        <li>Feature importance analysis</li>
+                        <li>Model persistence & loading</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🔧 src/preprocessing/ - Data Pipeline</h4>
+                    <p><strong>Purpose:</strong> Data transformation and feature engineering</p>
+                    <p><strong>Features:</strong> Complete preprocessing pipeline</p>
+                    <ul>
+                        <li>Feature scaling and normalization</li>
+                        <li>Categorical encoding (one-hot)</li>
+                        <li>BMI calculation from height/weight</li>
+                        <li>Missing value handling</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🖥️ src/ui/ - Interface Layer</h4>
+                    <p><strong>Purpose:</strong> Multiple user interface implementations</p>
+                    <p><strong>Total Lines:</strong> 339 lines of UI code</p>
+                    <ul>
+                        <li>Gradio web interface</li>
+                        <li>Console command-line interface</li>
+                        <li>Interactive input validation</li>
+                        <li>Result visualization</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🛠️ src/utils/ - Utilities</h4>
+                    <p><strong>Purpose:</strong> Helper functions and data utilities</p>
+                    <p><strong>Features:</strong> Data management and samples</p>
+                    <ul>
+                        <li>Sample data generation</li>
+                        <li>Data loading utilities</li>
+                        <li>Train/validation/test splitting</li>
+                        <li>Example input generation</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>📦 Root Applications</h4>
+                    <p><strong>Purpose:</strong> Main application entry points</p>
+                    <p><strong>Total Lines:</strong> 1600+ lines of application code</p>
+                    <ul>
+                        <li>Web application (1229 lines)</li>
+                        <li>CLI application (147 lines)</li>
+                        <li>Feature analysis tools</li>
+                        <li>Build and deployment scripts</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>File Size & Complexity Metrics</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>Lines of Code</th>
+                        <th>Primary Function</th>
+                        <th>Complexity Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>heart_disease_app.py</td>
+                        <td>1,229</td>
+                        <td>Main web application with enhanced UI</td>
+                        <td>🔴 High</td>
+                    </tr>
+                    <tr>
+                        <td>heart_disease_model.py</td>
+                        <td>389</td>
+                        <td>Core ML model implementation</td>
+                        <td>🟡 Medium</td>
+                    </tr>
+                    <tr>
+                        <td>model.py</td>
+                        <td>317</td>
+                        <td>Alternative model interface</td>
+                        <td>🟡 Medium</td>
+                    </tr>
+                    <tr>
+                        <td>feature_importance.py</td>
+                        <td>262</td>
+                        <td>Feature analysis and visualization</td>
+                        <td>🟡 Medium</td>
+                    </tr>
+                    <tr>
+                        <td>gradio_interface.py</td>
+                        <td>196</td>
+                        <td>Web interface implementation</td>
+                        <td>🟡 Medium</td>
+                    </tr>
+                    <tr>
+                        <td>build_exe.py</td>
+                        <td>169</td>
+                        <td>Executable builder with PyInstaller</td>
+                        <td>🟡 Medium</td>
+                    </tr>
+                    <tr>
+                        <td>feature_definitions.py</td>
+                        <td>154</td>
+                        <td>Medical feature specifications</td>
+                        <td>🟢 Low</td>
+                    </tr>
+                    <tr>
+                        <td>main.py</td>
+                        <td>147</td>
+                        <td>CLI application entry point</td>
+                        <td>🟢 Low</td>
+                    </tr>
+                    <tr>
+                        <td>console_interface.py</td>
+                        <td>143</td>
+                        <td>Command-line user interface</td>
+                        <td>🟢 Low</td>
+                    </tr>
+                    <tr>
+                        <td>example.py</td>
+                        <td>109</td>
+                        <td>Usage examples and demonstrations</td>
+                        <td>🟢 Low</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Code Distribution Analysis</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">3,000+</div>
+                    <div>Total Lines of Code</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20+</div>
+                    <div>Python Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6</div>
+                    <div>Core Modules</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div>User Interfaces</div>
+                </div>
+            </div>
+
+            <h3>Module Dependencies & Relationships</h3>
+            <div class="flowchart">
+                <div style="display: block; margin: 20px 0;">
+                    <div class="flow-step" style="background: #e74c3c;">Applications Layer</div>
+                    <div style="margin: 10px 0; color: #34495e;">heart_disease_app.py, main.py, analyze_features.py</div>
+                </div>
+                <div style="display: block; margin: 20px 0;">
+                    <div class="flow-step" style="background: #f39c12;">Interface Layer</div>
+                    <div style="margin: 10px 0; color: #34495e;">src/ui/ - gradio_interface.py, console_interface.py</div>
+                </div>
+                <div style="display: block; margin: 20px 0;">
+                    <div class="flow-step" style="background: #27ae60;">Business Logic Layer</div>
+                    <div style="margin: 10px 0; color: #34495e;">src/models/ - heart_disease_model.py, feature_importance.py</div>
+                </div>
+                <div style="display: block; margin: 20px 0;">
+                    <div class="flow-step" style="background: #3498db;">Processing Layer</div>
+                    <div style="margin: 10px 0; color: #34495e;">src/preprocessing/ - preprocessor.py</div>
+                </div>
+                <div style="display: block; margin: 20px 0;">
+                    <div class="flow-step" style="background: #9b59b6;">Data Layer</div>
+                    <div style="margin: 10px 0; color: #34495e;">src/data/ - feature_definitions.py, src/utils/ - data_loader.py</div>
+                </div>
+            </div>
+
+            <h3>Development & Deployment Files</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🔨 Build & Deployment</h4>
+                    <ul>
+                        <li><strong>build_exe.py:</strong> PyInstaller executable builder</li>
+                        <li><strong>build_exe.bat:</strong> Windows build script</li>
+                        <li><strong>*.spec:</strong> PyInstaller configuration files</li>
+                        <li><strong>run_heart_disease_app.bat:</strong> Quick launcher</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>📚 Documentation & Examples</h4>
+                    <ul>
+                        <li><strong>README.md:</strong> Comprehensive project documentation</li>
+                        <li><strong>documentation.html:</strong> Technical report</li>
+                        <li><strong>example.py:</strong> Usage demonstrations</li>
+                        <li><strong>requirements.txt:</strong> Dependency specifications</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🎯 Generated Assets</h4>
+                    <ul>
+                        <li><strong>feature_importance.png:</strong> Feature analysis plot</li>
+                        <li><strong>models/:</strong> Trained model storage</li>
+                        <li><strong>dist/:</strong> Distribution executables</li>
+                        <li><strong>__pycache__/:</strong> Python bytecode cache</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>⚙️ Configuration & Setup</h4>
+                    <ul>
+                        <li><strong>.gitignore:</strong> Version control exclusions</li>
+                        <li><strong>__init__.py:</strong> Python package markers</li>
+                        <li><strong>.gradio/:</strong> Web interface cache</li>
+                        <li><strong>build/:</strong> Temporary build artifacts</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🔄 Data Flow Architecture</h2>
+
+            <h3>System Processing Pipeline</h3>
+            <div class="flowchart">
+                <div class="flow-step">📥 Input Data</div>
+                <div class="flow-step">🔧 Preprocessing</div>
+                <div class="flow-step">⚙️ Feature Engineering</div>
+                <div class="flow-step">🤖 Model Prediction</div>
+                <div class="flow-step">📊 Risk Assessment</div>
+                <div class="flow-step">📈 Visualization</div>
+                <div class="flow-step">💡 Recommendations</div>
+            </div>
+
+            <h3>Component Interaction Flow</h3>
+            <p>The system follows a modular architecture where each component has specific responsibilities:</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📊 Data Layer</h4>
+                    <p>Feature definitions and data loading utilities for medical input validation and processing</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔧 Processing Layer</h4>
+                    <p>Data preprocessing and feature engineering including BMI calculation and normalization</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🤖 Model Layer</h4>
+                    <p>Machine learning model and prediction logic with Random Forest classification</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🖥️ Interface Layer</h4>
+                    <p>Multiple UI implementations for different use cases (web, console, executable)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📈 Visualization Layer</h4>
+                    <p>Professional medical charts and risk dashboards with clean white backgrounds</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💡 Intelligence Layer</h4>
+                    <p>Feature importance analysis and personalized recommendation generation</p>
+                </div>
+            </div>
+
+            <h3>Input-Output Data Flow</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stage</th>
+                        <th>Input</th>
+                        <th>Process</th>
+                        <th>Output</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Data Collection</td>
+                        <td>13 medical features</td>
+                        <td>Validation & type checking</td>
+                        <td>Validated input dictionary</td>
+                    </tr>
+                    <tr>
+                        <td>Preprocessing</td>
+                        <td>Raw feature values</td>
+                        <td>Scaling, encoding, BMI calc</td>
+                        <td>Normalized feature vector</td>
+                    </tr>
+                    <tr>
+                        <td>Prediction</td>
+                        <td>Processed features</td>
+                        <td>Random Forest inference</td>
+                        <td>Risk probability (0-1)</td>
+                    </tr>
+                    <tr>
+                        <td>Risk Assessment</td>
+                        <td>Probability score</td>
+                        <td>Risk level classification</td>
+                        <td>Risk category & explanation</td>
+                    </tr>
+                    <tr>
+                        <td>Visualization</td>
+                        <td>Features & predictions</td>
+                        <td>Chart generation</td>
+                        <td>Interactive dashboards</td>
+                    </tr>
+                    <tr>
+                        <td>Recommendations</td>
+                        <td>Risk factors & BMI</td>
+                        <td>Medical context analysis</td>
+                        <td>Personalized advice</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="algorithms" class="section">
+            <h2>🧠 Algorithms & Techniques</h2>
+
+            <h3>Machine Learning Algorithms</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Random Forest Classifier</h4>
+                    <p><strong>Parameters:</strong> 100 estimators, random_state=42</p>
+                    <p><strong>Advantages:</strong> Handles non-linear relationships, provides feature importance, resistant to overfitting</p>
+                </div>
+                <div class="feature-card">
+                    <h4>GridSearchCV</h4>
+                    <p><strong>Parameters:</strong> 5-fold cross-validation, ROC-AUC scoring</p>
+                    <p><strong>Search Space:</strong> n_estimators, max_depth, min_samples_split, min_samples_leaf</p>
+                </div>
+            </div>
+
+            <h3>Data Processing Techniques</h3>
+            <div class="code-block">
+# Feature Engineering Pipeline
+1. BMI Calculation: weight / (height/100)²
+2. One-Hot Encoding: Categorical variables → Binary features
+3. Standard Scaling: Numerical features → Normalized values
+4. Missing Value Handling: Imputation strategies
+5. Feature Selection: Based on importance scores
+            </div>
+
+            <h3>Evaluation Metrics</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Purpose</th>
+                        <th>Formula/Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Accuracy</td>
+                        <td>Overall correctness</td>
+                        <td>(TP + TN) / (TP + TN + FP + FN)</td>
+                    </tr>
+                    <tr>
+                        <td>Precision</td>
+                        <td>Positive prediction accuracy</td>
+                        <td>TP / (TP + FP)</td>
+                    </tr>
+                    <tr>
+                        <td>Recall</td>
+                        <td>True positive detection rate</td>
+                        <td>TP / (TP + FN)</td>
+                    </tr>
+                    <tr>
+                        <td>F1-Score</td>
+                        <td>Balanced precision-recall</td>
+                        <td>2 × (Precision × Recall) / (Precision + Recall)</td>
+                    </tr>
+                    <tr>
+                        <td>ROC-AUC</td>
+                        <td>Classification performance</td>
+                        <td>Area under ROC curve</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Risk Classification Logic</h3>
+            <div class="code-block">
+def get_risk_level(probability):
+    if probability < 0.2:
+        return "Low Risk"        # < 20%
+    elif probability < 0.5:
+        return "Moderate Risk"   # 20-50%
+    elif probability < 0.8:
+        return "High Risk"       # 50-80%
+    else:
+        return "Very High Risk"  # > 80%
+            </div>
+        </section>
+
+        <section id="interfaces" class="section">
+            <h2>🖥️ User Interfaces</h2>
+
+            <h3>1. Web Interface (heart_disease_app.py)</h3>
+            <div class="success">
+                <strong>Recommended Interface:</strong> Full-featured Gradio web application with enhanced visualizations
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>Interactive sliders and dropdowns</li>
+                        <li>Real-time BMI calculation</li>
+                        <li>Professional medical visualizations</li>
+                        <li>Personalized recommendations</li>
+                        <li>Mobile-responsive design</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Usage</h4>
+                    <div class="code-block">python heart_disease_app.py</div>
+                    <p>Access via browser at http://localhost:7860</p>
+                </div>
+            </div>
+
+            <h3>2. Console Interface (main.py)</h3>
+            <div class="info">
+                <strong>Best for:</strong> Automation, scripting, and users who prefer command-line interactions
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>Step-by-step input guidance</li>
+                        <li>Automatic model training</li>
+                        <li>Detailed result explanations</li>
+                        <li>Batch processing capability</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Usage</h4>
+                    <div class="code-block">python main.py</div>
+                    <p>Follow interactive prompts for input</p>
+                </div>
+            </div>
+
+            <h3>3. Feature Analysis Interface (analyze_features.py)</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>Feature importance visualization</li>
+                        <li>Gradio web interface</li>
+                        <li>Model performance analysis</li>
+                        <li>Top contributing factors</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Usage</h4>
+                    <div class="code-block">python analyze_features.py</div>
+                    <p>Generates plots and launches web UI</p>
+                </div>
+            </div>
+
+            <h3>4. Feature-Only Analysis (analyze_features_only.py)</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>Pure feature importance analysis</li>
+                        <li>PNG plot generation</li>
+                        <li>No UI dependencies</li>
+                        <li>Suitable for automation</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Usage</h4>
+                    <div class="code-block">python analyze_features_only.py</div>
+                    <p>Saves feature_importance.png</p>
+                </div>
+            </div>
+
+            <h3>5. Standalone Executable</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Features</h4>
+                    <ul>
+                        <li>No Python installation required</li>
+                        <li>Portable Windows executable</li>
+                        <li>Self-contained application</li>
+                        <li>Easy distribution</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Building</h4>
+                    <div class="code-block">python build_exe.py</div>
+                    <p>Creates dist/HeartDiseasePrediction.exe</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="implementation" class="section">
+            <h2>⚙️ Implementation Details</h2>
+
+            <h3>Dependencies & Requirements</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Library</th>
+                        <th>Version</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>numpy</td>
+                        <td>1.24.3</td>
+                        <td>Numerical computing and array operations</td>
+                    </tr>
+                    <tr>
+                        <td>pandas</td>
+                        <td>2.0.3</td>
+                        <td>Data manipulation and analysis</td>
+                    </tr>
+                    <tr>
+                        <td>scikit-learn</td>
+                        <td>1.3.0</td>
+                        <td>Machine learning algorithms and tools</td>
+                    </tr>
+                    <tr>
+                        <td>matplotlib</td>
+                        <td>3.7.2</td>
+                        <td>Plotting and visualization</td>
+                    </tr>
+                    <tr>
+                        <td>seaborn</td>
+                        <td>0.12.2</td>
+                        <td>Statistical data visualization</td>
+                    </tr>
+                    <tr>
+                        <td>gradio</td>
+                        <td>4.19.2</td>
+                        <td>Web interface framework</td>
+                    </tr>
+                    <tr>
+                        <td>joblib</td>
+                        <td>1.3.1</td>
+                        <td>Model serialization and persistence</td>
+                    </tr>
+                    <tr>
+                        <td>pyinstaller</td>
+                        <td>6.5.0</td>
+                        <td>Executable creation and packaging</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Key Implementation Challenges & Solutions</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Challenge: Matplotlib Font Conflicts</h4>
+                    <p><strong>Issue:</strong> title_fontsize and title_fontproperties cannot be used together</p>
+                    <p><strong>Solution:</strong> Removed title_fontproperties, using only title_fontsize</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Challenge: Professional Medical Styling</h4>
+                    <p><strong>Issue:</strong> Need clean, medical-grade visualizations</p>
+                    <p><strong>Solution:</strong> Implemented white backgrounds and professional color schemes</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Challenge: Multiple Interface Consistency</h4>
+                    <p><strong>Issue:</strong> Maintaining consistent functionality across interfaces</p>
+                    <p><strong>Solution:</strong> Modular architecture with shared core components</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Challenge: Model Persistence</h4>
+                    <p><strong>Issue:</strong> Saving both model and preprocessor state</p>
+                    <p><strong>Solution:</strong> Joblib serialization with custom data structure</p>
+                </div>
+            </div>
+
+            <h3>Code Quality & Best Practices</h3>
+            <ul>
+                <li><strong>Modular Design:</strong> Separation of concerns with dedicated modules</li>
+                <li><strong>Error Handling:</strong> Comprehensive exception handling and user feedback</li>
+                <li><strong>Documentation:</strong> Detailed docstrings and inline comments</li>
+                <li><strong>Type Safety:</strong> Clear parameter specifications and validation</li>
+                <li><strong>Performance:</strong> Efficient data processing and model inference</li>
+            </ul>
+        </section>
+
+        <section id="deployment" class="section">
+            <h2>🚀 Deployment & Usage</h2>
+
+            <h3>Installation Process</h3>
+            <div class="flowchart">
+                <div class="flow-step">Clone Repository</div>
+                <div class="flow-step">Install Python 3.8+</div>
+                <div class="flow-step">Install Dependencies</div>
+                <div class="flow-step">Run Application</div>
+            </div>
+
+            <h3>Quick Start Commands</h3>
+            <div class="code-block">
+# 1. Clone and setup
+git clone <repository-url>
+cd heart-disease-prediction
+pip install -r requirements.txt
+
+# 2. Run web interface (Recommended)
+python heart_disease_app.py
+
+# 3. Run console interface
+python main.py
+
+# 4. Analyze features
+python analyze_features.py
+
+# 5. Build executable
+python build_exe.py
+            </div>
+
+            <h3>Deployment Scenarios</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Development Environment</h4>
+                    <p>Direct Python execution with full development tools and debugging capabilities</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Production Web Server</h4>
+                    <p>Gradio web interface deployment with custom domain and scaling options</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Desktop Application</h4>
+                    <p>PyInstaller executable for Windows users without Python installation</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Research Environment</h4>
+                    <p>Console interface for batch processing and automated analysis</p>
+                </div>
+            </div>
+
+            <h3>Performance Considerations</h3>
+            <ul>
+                <li><strong>Model Loading:</strong> One-time loading with persistent model state</li>
+                <li><strong>Preprocessing:</strong> Efficient feature transformation pipeline</li>
+                <li><strong>Visualization:</strong> Optimized matplotlib rendering with appropriate DPI</li>
+                <li><strong>Memory Management:</strong> Proper cleanup and resource management</li>
+            </ul>
+        </section>
+
+        <section id="results" class="section">
+            <h2>📊 Results & Performance</h2>
+
+            <h3>System Capabilities</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">13</div>
+                    <div>Medical Features Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div>Risk Levels Classified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div>Feature Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div>Professional Visualization</div>
+                </div>
+            </div>
+
+            <h3>Feature Importance Rankings</h3>
+            <p>The model identifies key contributing factors to heart disease risk:</p>
+            <ol>
+                <li><strong>Chest Pain Type (cp):</strong> Most significant indicator of coronary issues</li>
+                <li><strong>Maximum Heart Rate (thalach):</strong> Cardiovascular fitness indicator</li>
+                <li><strong>ST Depression (oldpeak):</strong> Exercise-induced ischemia marker</li>
+                <li><strong>Number of Vessels (ca):</strong> Arterial blockage extent</li>
+                <li><strong>Thalassemia (thal):</strong> Heart muscle perfusion indicator</li>
+                <li><strong>Age:</strong> Fundamental demographic risk factor</li>
+                <li><strong>Exercise Angina (exang):</strong> Activity-related symptoms</li>
+            </ol>
+
+            <h3>Risk Assessment Accuracy</h3>
+            <div class="success">
+                <strong>Model Performance:</strong> The Random Forest classifier demonstrates strong performance across multiple evaluation metrics, providing reliable risk assessments with detailed explanations.
+            </div>
+
+            <h3>User Experience Metrics</h3>
+            <ul>
+                <li><strong>Interface Accessibility:</strong> 5 different interfaces for various user preferences</li>
+                <li><strong>Response Time:</strong> Real-time predictions with instant visualization</li>
+                <li><strong>Visual Clarity:</strong> Professional medical-grade charts and dashboards</li>
+                <li><strong>Educational Value:</strong> Comprehensive explanations and recommendations</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>🏗️ Visual System Architecture Diagrams</h2>
+
+            <h3>🏗️ Layered Architecture</h3>
+            <div class="architecture-diagram">
+                <!-- Applications Layer -->
+                <div class="architecture-layer layer-applications">
+                    <div class="layer-header">
+                        <div class="layer-icon">🚀</div>
+                        <div class="layer-title">Applications Layer</div>
+                    </div>
+                    <p>Entry points and main application interfaces for different use cases</p>
+                    <div class="layer-components">
+                        <div class="component-box">
+                            <div class="component-name">heart_disease_app.py</div>
+                            <div class="component-desc">Main Web Application<br>(1,229 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">main.py</div>
+                            <div class="component-desc">CLI Application<br>(147 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">analyze_features.py</div>
+                            <div class="component-desc">Feature Analysis<br>(60 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">build_exe.py</div>
+                            <div class="component-desc">Executable Builder<br>(169 lines)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection-line"></div>
+
+                <!-- Interface Layer -->
+                <div class="architecture-layer layer-interfaces">
+                    <div class="layer-header">
+                        <div class="layer-icon">🖥️</div>
+                        <div class="layer-title">Interface Layer</div>
+                    </div>
+                    <p>User interface implementations for web and console interactions</p>
+                    <div class="layer-components">
+                        <div class="component-box">
+                            <div class="component-name">gradio_interface.py</div>
+                            <div class="component-desc">Web UI Framework<br>(196 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">console_interface.py</div>
+                            <div class="component-desc">CLI Interface<br>(143 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">Visualization Engine</div>
+                            <div class="component-desc">Charts & Dashboards<br>Professional Medical UI</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection-line"></div>
+
+                <!-- Business Logic Layer -->
+                <div class="architecture-layer layer-business">
+                    <div class="layer-header">
+                        <div class="layer-icon">🤖</div>
+                        <div class="layer-title">Business Logic Layer</div>
+                    </div>
+                    <p>Core machine learning models and prediction algorithms</p>
+                    <div class="layer-components">
+                        <div class="component-box">
+                            <div class="component-name">heart_disease_model.py</div>
+                            <div class="component-desc">Main ML Model<br>(389 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">model.py</div>
+                            <div class="component-desc">Alternative Interface<br>(317 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">feature_importance.py</div>
+                            <div class="component-desc">Analysis Tools<br>(262 lines)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection-line"></div>
+
+                <!-- Processing Layer -->
+                <div class="architecture-layer layer-processing">
+                    <div class="layer-header">
+                        <div class="layer-icon">🔧</div>
+                        <div class="layer-title">Processing Layer</div>
+                    </div>
+                    <p>Data transformation, feature engineering, and preprocessing pipeline</p>
+                    <div class="layer-components">
+                        <div class="component-box">
+                            <div class="component-name">preprocessor.py</div>
+                            <div class="component-desc">Feature Transformation<br>Scaling & Encoding</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">BMI Calculator</div>
+                            <div class="component-desc">Derived Features<br>Medical Calculations</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">Validation Engine</div>
+                            <div class="component-desc">Input Validation<br>Range Checking</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="connection-line"></div>
+
+                <!-- Data Layer -->
+                <div class="architecture-layer layer-data">
+                    <div class="layer-header">
+                        <div class="layer-icon">📊</div>
+                        <div class="layer-title">Data Layer</div>
+                    </div>
+                    <p>Feature definitions, data loading utilities, and sample generation</p>
+                    <div class="layer-components">
+                        <div class="component-box">
+                            <div class="component-name">feature_definitions.py</div>
+                            <div class="component-desc">Medical Features<br>(154 lines)</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">data_loader.py</div>
+                            <div class="component-desc">Data Utilities<br>Sample Generation</div>
+                        </div>
+                        <div class="component-box">
+                            <div class="component-name">Model Storage</div>
+                            <div class="component-desc">Trained Models<br>Joblib Persistence</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>🔗 Component Interaction Diagram</h3>
+            <div class="component-diagram">
+                <div class="component-card card-input">
+                    <h4>📥 Input Components</h4>
+                    <ul>
+                        <li><strong>Web Forms:</strong> Gradio sliders & dropdowns</li>
+                        <li><strong>Console Input:</strong> Interactive prompts</li>
+                        <li><strong>API Interface:</strong> Programmatic access</li>
+                        <li><strong>File Import:</strong> Batch processing</li>
+                    </ul>
+                    <div style="margin-top: 15px; padding: 10px; background: #fef2f2; border-radius: 5px;">
+                        <strong>Validates:</strong> Age, Gender, Medical History, Test Results
+                    </div>
+                </div>
+
+                <div class="component-card card-process">
+                    <h4>⚙️ Processing Components</h4>
+                    <ul>
+                        <li><strong>Feature Engineer:</strong> BMI calculation</li>
+                        <li><strong>Data Transformer:</strong> Scaling & encoding</li>
+                        <li><strong>ML Engine:</strong> Random Forest classifier</li>
+                        <li><strong>Risk Calculator:</strong> Probability assessment</li>
+                    </ul>
+                    <div style="margin-top: 15px; padding: 10px; background: #fff7ed; border-radius: 5px;">
+                        <strong>Processes:</strong> 13 Features → Risk Probability (0-100%)
+                    </div>
+                </div>
+
+                <div class="component-card card-output">
+                    <h4>📤 Output Components</h4>
+                    <ul>
+                        <li><strong>Risk Dashboard:</strong> Color-coded gauges</li>
+                        <li><strong>Feature Charts:</strong> Impact visualization</li>
+                        <li><strong>Recommendations:</strong> Personalized advice</li>
+                        <li><strong>Reports:</strong> Detailed explanations</li>
+                    </ul>
+                    <div style="margin-top: 15px; padding: 10px; background: #f0fdf4; border-radius: 5px;">
+                        <strong>Delivers:</strong> Risk Level, Probability, Medical Context
+                    </div>
+                </div>
+            </div>
+
+            <h3>🔄 Enhanced Data Processing Flow</h3>
+            <div class="data-flow-diagram">
+                <div class="flow-container">
+                    <div class="flow-node">
+                        <div style="font-size: 1.5em; margin-bottom: 10px;">📥</div>
+                        <div><strong>Input Data</strong></div>
+                        <div style="font-size: 0.9em;">13 Medical Features</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div style="font-size: 1.5em; margin-bottom: 10px;">🔍</div>
+                        <div><strong>Validation</strong></div>
+                        <div style="font-size: 0.9em;">Range & Type Checking</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div style="font-size: 1.5em; margin-bottom: 10px;">⚙️</div>
+                        <div><strong>Preprocessing</strong></div>
+                        <div style="font-size: 0.9em;">Scaling & Encoding</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div style="font-size: 1.5em; margin-bottom: 10px;">🤖</div>
+                        <div><strong>ML Prediction</strong></div>
+                        <div style="font-size: 0.9em;">Random Forest</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div style="font-size: 1.5em; margin-bottom: 10px;">📊</div>
+                        <div><strong>Risk Assessment</strong></div>
+                        <div style="font-size: 0.9em;">Classification & Probability</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div style="font-size: 1.5em; margin-bottom: 10px;">📈</div>
+                        <div><strong>Visualization</strong></div>
+                        <div style="font-size: 0.9em;">Charts & Dashboards</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div style="font-size: 1.5em; margin-bottom: 10px;">💡</div>
+                        <div><strong>Recommendations</strong></div>
+                        <div style="font-size: 0.9em;">Personalized Advice</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info">
+                <strong>🎯 Architecture Benefits:</strong> This layered architecture provides modularity, maintainability, and scalability. Each layer has clear responsibilities and can be developed, tested, and deployed independently. The visual diagrams make it easy to understand component relationships and data flow throughout the system.
+            </div>
+        </section>
+
+        <section id="conclusion" class="section">
+            <h2>🎯 Conclusion & Future Work</h2>
+
+            <h3>Project Achievements</h3>
+            <div class="success">
+                <strong>Successfully Delivered:</strong> A comprehensive heart disease prediction system with multiple interfaces, professional visualizations, and robust machine learning capabilities.
+            </div>
+
+            <h3>Key Accomplishments</h3>
+            <ul>
+                <li>✅ <strong>Advanced ML Implementation:</strong> Random Forest with hyperparameter optimization</li>
+                <li>✅ <strong>Multiple User Interfaces:</strong> Web, console, and executable options</li>
+                <li>✅ <strong>Professional Visualizations:</strong> Medical-grade charts with white backgrounds</li>
+                <li>✅ <strong>Comprehensive Documentation:</strong> Detailed technical and user documentation</li>
+                <li>✅ <strong>Deployment Ready:</strong> Multiple deployment scenarios supported</li>
+                <li>✅ <strong>Error Resolution:</strong> Fixed matplotlib compatibility issues</li>
+            </ul>
+
+            <h3>Technical Innovations</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Enhanced Risk Visualization</h4>
+                    <p>Color-coded risk gauges with medical context and personalized recommendations</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Multi-Interface Architecture</h4>
+                    <p>Flexible system supporting web, console, and executable deployment</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Medical Context Integration</h4>
+                    <p>BMI calculation, feature categorization, and clinical explanations</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Professional Styling</h4>
+                    <p>Clean white backgrounds and medical-grade visualization standards</p>
+                </div>
+            </div>
+
+            <h3>Future Enhancement Opportunities</h3>
+            <ul>
+                <li><strong>Advanced Algorithms:</strong> Integration of deep learning models (Neural Networks, XGBoost)</li>
+                <li><strong>Real-time Data:</strong> Integration with medical devices and health monitoring systems</li>
+                <li><strong>Mobile Applications:</strong> Native iOS and Android applications</li>
+                <li><strong>Clinical Validation:</strong> Validation with real clinical datasets and medical professional feedback</li>
+                <li><strong>Multi-language Support:</strong> Internationalization for global healthcare applications</li>
+                <li><strong>Enhanced Security:</strong> HIPAA compliance and secure data handling</li>
+            </ul>
+
+            <h3>Impact & Applications</h3>
+            <div class="info">
+                <strong>Educational Impact:</strong> This system serves as an excellent example of applied machine learning in healthcare, demonstrating best practices in software development, user interface design, and medical data visualization.
+            </div>
+
+            <h3>Lessons Learned</h3>
+            <ul>
+                <li><strong>User Experience:</strong> Multiple interfaces cater to different user preferences and technical capabilities</li>
+                <li><strong>Visualization Quality:</strong> Professional medical styling significantly improves user trust and comprehension</li>
+                <li><strong>Modular Design:</strong> Component separation enables easier maintenance and feature addition</li>
+                <li><strong>Error Handling:</strong> Proactive issue resolution improves system reliability</li>
+            </ul>
+        </section>
+
+        <div class="footer">
+            <h3>Heart Disease Prediction System</h3>
+            <p>Comprehensive Machine Learning Solution for Cardiovascular Risk Assessment</p>
+            <p><strong>Project Documentation & Technical Report</strong></p>
+            <br>
+            <p>⚠️ <strong>Medical Disclaimer:</strong> This system is for educational and research purposes only. Always consult healthcare professionals for medical decisions.</p>
+            <br>
+            <p><em>Made with ❤️ for better health outcomes</em></p>
+        </div>
+    </div>
+</body>
+</html> 
