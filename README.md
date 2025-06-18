@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Heart Disease Prediction System 🫀
 
 A comprehensive machine learning system for predicting heart disease risk using patient data. This project provides multiple interfaces (web, console, and executable) with advanced visualization and explanation capabilities.
@@ -574,4 +574,4 @@ For questions, suggestions, or collaborations, please contact:
 ---
 
 ⭐ **Star this repository if you find it useful!** ⭐ 
->>>>>>> fe8d9f37b5918482e32d2cf5e189aa1d50afe229
+
