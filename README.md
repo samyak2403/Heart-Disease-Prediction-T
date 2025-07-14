@@ -3,6 +3,8 @@
 
 A comprehensive machine learning system for predicting heart disease risk using patient data. This project provides multiple interfaces (web, console, and executable) with advanced visualization and explanation capabilities.
 
+[pip install numpy==1.24.3 pandas==2.0.3 scikit-learn==1.3.0 matplotlib==3.7.2 seaborn==0.12.2 joblib==1.3.1 gradio==4.19.2 pyinstaller==6.5.0]
+
 ## 🌟 Features
 
 ### 🔬 **Core Prediction Engine**
