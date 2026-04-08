@@ -570,8 +570,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For questions, suggestions, or collaborations, please contact:
 - **Samyak Kamble**
-- Email: samyak.kamble@example.com
-- LinkedIn: [linkedin.com/in/samyak-kamble](https://linkedin.com/in/samyakkamble)
+- Email: samyakkamble6659@gmail.com
+- LinkedIn: [linkedin.com/in/samyak-kamble](https://linkedin.com/in/samyak-kamble6659)
 
 ---
 
